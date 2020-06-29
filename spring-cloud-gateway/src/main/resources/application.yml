@@ -1,0 +1,36 @@
+server:
+  port: 8800
+
+spring:
+  application:
+    name: spring-cloud-gateway #服务之间的调用都是根据这个 name
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+      - id: provider_route
+        uri: lb://spring-cloud-provider
+        predicates:
+        - Path=/provider/**
+        filters:
+        - StripPrefix=1
+
+      - id: test_route
+        uri: https://www.google.com.hk
+        predicates:
+        - Path=/google
+        filters:
+        - StripPrefix=1
+
+eureka:
+  client:
+    register-with-eureka: false
+    serviceUrl:
+      defaultZone: http://localhost:8000/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
